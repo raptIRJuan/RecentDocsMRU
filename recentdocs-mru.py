@@ -64,7 +64,7 @@ def main():
 			print "Couldn't find the MRUListEx in the %s subkey." % (subkey.name())
 
 	if args.output:
-		with open(args.output, 'w') as outputfile:
+		with open(args.output, 'wb') as outputfile:
 			for i in recent:
 				if len(i.fname) % 2 != 0:
 					i.fname += '\x00'
