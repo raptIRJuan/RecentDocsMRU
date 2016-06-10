@@ -50,8 +50,12 @@ def main():
 	recent = []
 	for r in MRUListEx:
 		recent += [FileEntry(key.value(str(r)).value().split('\x00\x00')[0])]	
-
-	recent[0].ftimestamp = key.timestamp()
+	
+	if recent:
+		recent[0].ftimestamp = key.timestamp()
+	else: 
+		print "RecentDocs MRUListEx is empty"
+		sys.exit(1)
 	
 	for subkey in key.subkeys():
 		timestamp = subkey.timestamp()
