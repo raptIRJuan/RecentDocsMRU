@@ -60,10 +60,14 @@ def main():
 	for subkey in key.subkeys():
 		timestamp = subkey.timestamp()
 		try:
-			mru0 = str(parse_MRUListEx(subkey.value('MRUListEx').value())[0])
-			for i in recent:
-				if i.fname == subkey.value(mru0).value().split('\x00\x00')[0]:
-					i.ftimestamp = timestamp
+			subMRUListEx = parse_MRUListEx(subkey.value('MRUListEx').value())
+			if subMRUListEx:
+				mru0 = str(subMRUListEx[0])
+				for i in recent:
+					if i.fname == subkey.value(mru0).value().split('\x00\x00')[0]:
+						i.ftimestamp = timestamp
+			else:
+				print "The MRUListEx for subkey %s is empty." % (subkey.name())
 		except Registry.RegistryValueNotFoundException:
 			print "Couldn't find the MRUListEx in the %s subkey." % (subkey.name())
 
