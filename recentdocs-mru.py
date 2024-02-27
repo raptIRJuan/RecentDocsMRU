@@ -28,9 +28,9 @@ class FileEntry(object):
 		self.ftimestamp = " "*26
 		
 def parse_MRUListEx(mrulist):
-	size = (len(mrulist) - 4) / 4
+	size = (len(mrulist) - 4) // 4
 	struct_arg = "%sI" % (size)
-	return struct.unpack(struct_arg, mrulist.rstrip('\xff\xff\xff\xff'))
+	return struct.unpack(struct_arg, mrulist.rstrip(b'\xff\xff\xff\xff'))
 
 def main():
 	parser = argparse.ArgumentParser(description = 'Parses the RecentDocs key')
@@ -42,19 +42,19 @@ def main():
 
 	try:
 		key = reg.open("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\RecentDocs")
-	except Registry.RegistryKeyNotFoundException:
-		print "Couldn't find the RecentDocs key."
+	except Registry.RegistryKeyNotFoundException as e:
+		print("Couldn't find the RecentDocs key.")
 		sys.exit(1)
 
 	MRUListEx = parse_MRUListEx(key.value('MRUListEx').value())
 	recent = []
 	for r in MRUListEx:
-		recent += [FileEntry(key.value(str(r)).value().split('\x00\x00')[0])]	
+		recent += [FileEntry(key.value(str(r)).value().split(b'\x00\x00')[0])]
 	
 	if recent:
 		recent[0].ftimestamp = key.timestamp()
 	else: 
-		print "RecentDocs MRUListEx is empty"
+		print("RecentDocs MRUListEx is empty")
 		sys.exit(1)
 	
 	for subkey in key.subkeys():
@@ -64,23 +64,23 @@ def main():
 			if subMRUListEx:
 				mru0 = str(subMRUListEx[0])
 				for i in recent:
-					if i.fname == subkey.value(mru0).value().split('\x00\x00')[0]:
+					if i.fname == subkey.value(mru0).value().split(b'\x00\x00')[0]:
 						i.ftimestamp = timestamp
 			else:
-				print "The MRUListEx for subkey %s is empty." % (subkey.name())
-		except Registry.RegistryValueNotFoundException:
-			print "Couldn't find the MRUListEx in the %s subkey." % (subkey.name())
+				print("The MRUListEx for subkey %s is empty." % (subkey.name()))
+		except Registry.RegistryValueNotFoundException as e:
+			print("Couldn't find the MRUListEx in the %s subkey." % (subkey.name()))
 
 	if args.output:
 		with open(args.output, 'wb') as outputfile:
 			for i in recent:
 				if len(i.fname) % 2 != 0:
-					i.fname += '\x00'
+					i.fname += b'\x00'
 				line = str(i.ftimestamp) + ' ' + i.fname.decode('utf-16') + '\r\n'
 				outputfile.write(line.encode('utf-16'))
 	else:
 		for i in recent:
-			print str(i.ftimestamp) + ' ' + i.fname.replace('\x00', '')
+			print(str(i.ftimestamp) + ' ' + str(i.fname.replace(b'\x00', b'')))
 			
 if __name__ == '__main__':
 	main()
