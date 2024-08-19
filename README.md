@@ -21,4 +21,4 @@ recentdocs-mru.py -f NTUSER.DAT -o output.txt
 * This is not an original idea. Eric Opdyke ([@EricOpdyke](https://twitter.com/EricOpdyke)) created a similar script long ago. You can find it here: https://github.com/eopdyke/RecentDocs-MRU-Parser. However, Eric's script needs to be run on Windows due to the use of python's winreg module. I wanted something that I could run on OS X, or Ubuntu, as well as Windows.
 * Willi Ballenthin ([@williballenthin](https://twitter.com/williballenthin)) for his python-registry project. It makes pulling keys and values from the registry easy. 
 * Dan ([@4n6k](https://twitter.com/4n6k)) for a great [post](http://www.4n6k.com/2014/02/forensics-quickie-pinpointing-recent.html) regarding this artifact. 
-
+* drwicid (https://github.com/drwicid) for updating the script for python 3. 
